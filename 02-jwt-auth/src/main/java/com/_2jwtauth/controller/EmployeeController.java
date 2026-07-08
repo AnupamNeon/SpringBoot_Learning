@@ -3,6 +3,7 @@ package com._2jwtauth.controller;
 import com._2jwtauth.model.Employee;
 import com._2jwtauth.service.EmployeeService;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -19,6 +20,7 @@ public class EmployeeController {
 
     // GET employee by id
     @GetMapping("/{id}")
+    @PreAuthorize("hasAuthority('EMPLOYEE_READ')")
     public ResponseEntity<Employee> getEmployeeById(@PathVariable Long id) {
         Employee employee = employeeService.getEmployeeById(id);
         if (employee != null) {
@@ -29,12 +31,14 @@ public class EmployeeController {
 
     // GET all employees
     @GetMapping
+    @PreAuthorize("hasAuthority('EMPLOYEE_READ')")
     public ResponseEntity<List<Employee>> getAllEmployees() {
         return ResponseEntity.ok(employeeService.getAllEmployees());
     }
 
     // POST add employee
     @PostMapping
+    @PreAuthorize("hasAuthority('EMPLOYEE_WRITE')")
     public ResponseEntity<Employee> addEmployee(@RequestBody Employee employee) {
         Employee saved = employeeService.addEmployee(employee);
         if (saved != null) {
@@ -45,6 +49,7 @@ public class EmployeeController {
 
     // PUT update employee
     @PutMapping("/{id}")
+    @PreAuthorize("hasAuthority('EMPLOYEE_WRITE')")
     public ResponseEntity<Employee> updateEmployee(
             @PathVariable Long id,
             @RequestBody Employee employee) {
@@ -58,6 +63,7 @@ public class EmployeeController {
 
     // DELETE employee
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasAuthority('EMPLOYEE_DELETE')")
     public ResponseEntity<String> deleteEmployee(@PathVariable Long id) {
         String result = employeeService.deleteEmployee(id);
         if ("Employee Deleted successfully".equals(result)) {

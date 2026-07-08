@@ -24,7 +24,7 @@ public class EmployeeService {
     }
 
     public Employee updateEmployee(Long id, Employee employee) {
-        return employeeRepository.updateEmployee(id.intValue(), employee);
+        return employeeRepository.updateEmployee(id, employee);
     }
 
     public List<Employee> getAllEmployees() {

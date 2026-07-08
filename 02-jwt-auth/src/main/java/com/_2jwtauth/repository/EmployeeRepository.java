@@ -13,12 +13,14 @@ import java.util.List;
 
 @Repository
 public class EmployeeRepository {
+
     private final DataSource dataSource;
-    
-    public EmployeeRepository(DataSource ds){
+
+    public EmployeeRepository(DataSource ds) {
         this.dataSource = ds;
     }
 
+    // Maps a ResultSet row to an Employee object
     private Employee mapRow(ResultSet rs) throws SQLException {
         return new Employee(
                 rs.getLong("id"),
@@ -28,107 +30,82 @@ public class EmployeeRepository {
                 rs.getDate("joiningDate").toLocalDate()
         );
     }
-    
-    // get Employee by id
-    public Employee getEmployeeById(Long id){
+
+    public Employee getEmployeeById(Long id) {
         String sql = "SELECT * FROM employee WHERE id = ?";
-        try(Connection conn = dataSource.getConnection();
-            PreparedStatement ps = conn.prepareStatement(sql)){
+        try (Connection conn = dataSource.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setLong(1, id);
-
-            ResultSet  rs = ps.executeQuery();
+            ResultSet rs = ps.executeQuery();
             if (rs.next()) return mapRow(rs);
-        }
-        catch (SQLException e){
-            e.printStackTrace();
-        }
-        return null;
-    }
-
-    // add Employee
-    public Employee addEmployee(Employee employee) {
-        String sql = "INSERT INTO employee(id, name, departement, salary, joiningDate) VALUES (?, ?, ?, ?, ?)";
-        try (
-                Connection conn = dataSource.getConnection();
-                PreparedStatement ps = conn.prepareStatement(sql)
-        ) {
-            ps.setLong(1, employee.getId());
-            ps.setString(2, employee.getName());
-            ps.setString(3, employee.getDepartment());
-            ps.setBigDecimal(4, employee.getSalary());
-            ps.setDate(5, java.sql.Date.valueOf(employee.getJoiningDate()));
-
-            int rows = ps.executeUpdate();
-            if (rows > 0) return employee;
-
         } catch (SQLException e) {
             e.printStackTrace();
         }
         return null;
     }
 
-    // update Employee
-    public Employee updateEmployee(int id, Employee employee){
-        String sql = "UPDATE employee SET name = ?, department = ?, salary = ?, joiningDate =? WHERE id = ?";
-        Long e_id = employee.getId();
-
-        Employee e = getEmployeeById(e_id);
-
-        if(e != null) {
-            try (
-                    Connection conn = dataSource.getConnection();
-                    PreparedStatement ps = conn.prepareStatement(sql)
-            ) {
-                ps.setString(1, employee.getName());
-                ps.setString(2, employee.getDepartment());
-                ps.setBigDecimal(3, employee.getSalary());
-                ps.setDate(4, java.sql.Date.valueOf(employee.getJoiningDate()));
-                ps.setLong(5, employee.getId());
-
-                int rows = ps.executeUpdate();
-                if (rows > 0) return employee;
-
-            } catch (SQLException ex) {
-                ex.printStackTrace();
-            }
+    public Employee addEmployee(Employee employee) {
+        String sql = "INSERT INTO employee(id, name, department, salary, joiningDate) VALUES (?, ?, ?, ?, ?)";
+        try (Connection conn = dataSource.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setLong(1, employee.getId());
+            ps.setString(2, employee.getName());
+            ps.setString(3, employee.getDepartment());
+            ps.setBigDecimal(4, employee.getSalary());
+            ps.setDate(5, java.sql.Date.valueOf(employee.getJoiningDate()));
+            int rows = ps.executeUpdate();
+            if (rows > 0) return employee;
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
         return null;
     }
 
-    // get ALl employee
-    public List<Employee> getAllEmployees(){
-        List<Employee> result= new ArrayList<>();
-        String sql = "SELECT * FROM employee";
-        try(Connection conn = dataSource.getConnection();
-            PreparedStatement ps = conn.prepareStatement(sql)){
-            ResultSet  rs = ps.executeQuery();
-            while (rs.next()) {
-                result.add(mapRow(rs));
-            }
+    // ← Changed parameter type from int to Long — consistent with the rest of the codebase
+    public Employee updateEmployee(Long id, Employee employee) {
+        String sql = "UPDATE employee SET name = ?, department = ?, salary = ?, joiningDate = ? WHERE id = ?";
+
+        // Guard: make sure the employee exists before updating
+        if (getEmployeeById(id) == null) return null;
+
+        try (Connection conn = dataSource.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, employee.getName());
+            ps.setString(2, employee.getDepartment());
+            ps.setBigDecimal(3, employee.getSalary());
+            ps.setDate(4, java.sql.Date.valueOf(employee.getJoiningDate()));
+            ps.setLong(5, id);
+            int rows = ps.executeUpdate();
+            if (rows > 0) return employee;
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
-        catch (SQLException e){
+        return null;
+    }
+
+    public List<Employee> getAllEmployees() {
+        List<Employee> result = new ArrayList<>();
+        String sql = "SELECT * FROM employee";
+        try (Connection conn = dataSource.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) result.add(mapRow(rs));
+        } catch (SQLException e) {
             e.printStackTrace();
         }
         return result;
     }
 
-    // delete employee
     public String deleteEmployee(Long id) {
         String sql = "DELETE FROM employee WHERE id = ?";
-
-        Employee e = getEmployeeById(id);
-        if (e != null) {
-            try (
-                    Connection conn = dataSource.getConnection();
-                    PreparedStatement ps = conn.prepareStatement(sql)
-            ) {
-                ps.setLong(1, id);
-
-                int rows = ps.executeUpdate();
-                if (rows > 0) return "Employee Deleted successfully";
-            } catch (SQLException ex) {
-                ex.printStackTrace();
-            }
+        if (getEmployeeById(id) == null) return "Invalid Employee ID";
+        try (Connection conn = dataSource.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setLong(1, id);
+            int rows = ps.executeUpdate();
+            if (rows > 0) return "Employee Deleted successfully";
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
         return "Invalid Employee ID";
     }

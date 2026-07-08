@@ -2,6 +2,7 @@ package com._2jwtauth.controller;
 
 import com._2jwtauth.model.User;
 import com._2jwtauth.service.UserService;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -18,30 +19,21 @@ public class UserController {
 
     // get user by id
     @GetMapping("/{id}")
+    @PreAuthorize("hasAuthority('USER_READ')")
     public User getUserById(@PathVariable Long id) {
         return userService.getUserById(id);
     }
 
-    // get all users
-    @GetMapping
-    public List<User> getAllUsers() {
-        return userService.getAllUsers();
-    }
-
-    // add user
-    @PostMapping
-    public User addUser(@RequestBody User user) {
-        return userService.addUser(user);
-    }
-
     // update user
     @PutMapping("/{id}")
+    @PreAuthorize("hasAuthority('USER_WRITE')")
     public User updateUser(@PathVariable Long id, @RequestBody User user) {
         return userService.updateUser(id, user);
     }
 
     // delete user
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasAuthority('USER_DELETE')")
     public String deleteUser(@PathVariable Long id) {
         return userService.deleteUser(id);
     }

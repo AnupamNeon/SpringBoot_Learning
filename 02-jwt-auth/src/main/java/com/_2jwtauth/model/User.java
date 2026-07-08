@@ -1,17 +1,23 @@
 package com._2jwtauth.model;
 
-public class User {
+import java.util.ArrayList;
+import java.util.List;
 
+public class User {
     private Long id;
     private String username;
     private String email;
     private String password;
-    private boolean enabled;
+
+    // ── Changed from primitive boolean to wrapper Boolean ──────────────────
+    private Boolean enabled;
+
+    private List<Role> roles = new ArrayList<>();
 
     public User() {
     }
 
-    public User(Long id, String username, String email, String password, boolean enabled) {
+    public User(Long id, String username, String email, String password, Boolean enabled) {
         this.id = id;
         this.username = username;
         this.email = email;
@@ -51,11 +57,21 @@ public class User {
         this.password = password;
     }
 
+    // ── Return boolean (primitive) from Boolean (wrapper) ───────────────────
+    // isEnabled() is called by Spring Security's UserDetails indirectly
     public boolean isEnabled() {
-        return enabled;
+        return Boolean.TRUE.equals(enabled);
     }
 
-    public void setEnabled(boolean enabled) {
+    public void setEnabled(Boolean enabled) {
         this.enabled = enabled;
+    }
+
+    public List<Role> getRoles() {
+        return roles;
+    }
+
+    public void setRoles(List<Role> roles) {
+        this.roles = roles;
     }
 }

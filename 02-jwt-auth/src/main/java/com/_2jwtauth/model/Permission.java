@@ -1,7 +1,6 @@
 package com._2jwtauth.model;
 
 public class Permission {
-
     private Long id;
     private String name;
 

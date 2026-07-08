@@ -1,9 +1,14 @@
 package com._2jwtauth.model;
 
-public class Role {
+import java.util.ArrayList;
+import java.util.List;
 
+public class Role {
     private Long id;
     private String name;
+
+    // Added permissions list
+    private List<Permission> permissions = new ArrayList<>();
 
     public Role() {
     }
@@ -27,5 +32,13 @@ public class Role {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public List<Permission> getPermissions() {
+        return permissions;
+    }
+
+    public void setPermissions(List<Permission> permissions) {
+        this.permissions = permissions;
     }
 }
