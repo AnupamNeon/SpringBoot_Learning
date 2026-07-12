@@ -1,5 +1,6 @@
 package com._4jpa_hibernate.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -23,7 +24,8 @@ public class Teacher {
     private String department;
 
     // ONE teacher has MANY courses
-    @OneToMany(mappedBy = "teacher", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "teacher")
+    @JsonIgnore
     private List<Course> courses = new ArrayList<>();
 
     public Teacher() {}

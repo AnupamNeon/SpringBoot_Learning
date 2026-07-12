@@ -1,5 +1,6 @@
 package com._4jpa_hibernate.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 @Entity
@@ -20,6 +21,7 @@ public class StudentProfile {
     // One profile belongs to one student (FK: student_id)
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "student_id", unique = true)
+    @JsonIgnore
     private Student student;
 
     // Required by JPA

@@ -50,4 +50,28 @@ public class CourseController {
         courseService.deleteCourse(id);
         return ResponseEntity.ok("Course deleted successfully");
     }
+
+    // Assign teacher to course
+    @PutMapping("/{courseId}/teacher/{teacherId}")
+    public ResponseEntity<Course> assignTeacher(@PathVariable int courseId, @PathVariable int teacherId) {
+        return ResponseEntity.ok(courseService.assignTeacher(courseId, teacherId));
+    }
+
+    // Get courses by Teacher's Department (Uses Custom JPQL)
+    @GetMapping("/department/{dept}")
+    public ResponseEntity<List<Course>> getCoursesByDepartment(@PathVariable String dept) {
+        return ResponseEntity.ok(courseService.getCoursesByDepartment(dept));
+    }
+
+    // Get courses enrolled by a specific Student Name (Uses Custom JPQL Join)
+    @GetMapping("/student/{name}")
+    public ResponseEntity<List<Course>> getCoursesByStudentName(@PathVariable String name) {
+        return ResponseEntity.ok(courseService.getCoursesByStudentName(name));
+    }
+
+    // Get course by name using Native SQL
+    @GetMapping("/search")
+    public ResponseEntity<List<Course>> searchCourseByName(@RequestParam String name) {
+        return ResponseEntity.ok(courseService.getCourseByNameNative(name));
+    }
 }

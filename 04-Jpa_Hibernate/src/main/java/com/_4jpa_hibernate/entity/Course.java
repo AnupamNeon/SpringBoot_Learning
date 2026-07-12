@@ -3,6 +3,7 @@ package com._4jpa_hibernate.entity;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -45,6 +46,7 @@ public class Course {
      * annotation. This side is the inverse (non-owning) side.
      */
     @ManyToMany(mappedBy = "courses")
+    @JsonIgnore  // Prevents infinite recursion during JSON serialization
     private List<Student> students = new ArrayList<>();
 
     // Required by JPA
