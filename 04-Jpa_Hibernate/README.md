@@ -240,3 +240,26 @@ Additionally, `@Transactional` enables **Dirty Checking**. If you fetch an entit
 | `findById` returns `null` → manual check | `findById` returns `Optional` → `orElseThrow()` |
 | No transaction management | `@Transactional` on service class |
 | Manual connection closing / resource leaks | Hibernate manages sessions automatically |
+
+---
+
+## Unit Testing
+
+| Annotation / Method                   | Purpose                             |
+| ------------------------------------- | ----------------------------------- |
+| `@ExtendWith(MockitoExtension.class)` | Enables Mockito in JUnit 5          |
+| `@Mock`                               | Creates fake dependency objects     |
+| `@InjectMocks`                        | Injects mocks into the tested class |
+| `@Test`                               | Marks a test method                 |
+| `assertThat()`                        | Checks expected results             |
+| `assertThatThrownBy()`                | Checks exceptions                   |
+| `when()`                              | Defines mock behavior               |
+| `verify()`                            | Checks method calls                 |
+| `any()`                               | Matches any object                  |
+| `never()`                             | Ensures a method was not called     |
+
+| Section | Purpose                                                    |
+| ------- | ---------------------------------------------------------- |
+| Arrange | Creates test data and sets up required mocks/configuration |
+| Act     | Calls the real service method being tested                 |
+| Assert  | Verifies the expected results, behavior, or exceptions     |
