@@ -263,3 +263,5 @@ Additionally, `@Transactional` enables **Dirty Checking**. If you fetch an entit
 | Arrange | Creates test data and sets up required mocks/configuration |
 | Act     | Calls the real service method being tested                 |
 | Assert  | Verifies the expected results, behavior, or exceptions     |
+
+verifyNoMoreInteractions()
