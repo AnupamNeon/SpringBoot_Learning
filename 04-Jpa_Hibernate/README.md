@@ -243,25 +243,54 @@ Additionally, `@Transactional` enables **Dirty Checking**. If you fetch an entit
 
 ---
 
-## Unit Testing
+### Unit Testing (Mockito + JUnit 5)
 
-| Annotation / Method                   | Purpose                             |
-| ------------------------------------- | ----------------------------------- |
-| `@ExtendWith(MockitoExtension.class)` | Enables Mockito in JUnit 5          |
-| `@Mock`                               | Creates fake dependency objects     |
-| `@InjectMocks`                        | Injects mocks into the tested class |
-| `@Test`                               | Marks a test method                 |
-| `assertThat()`                        | Checks expected results             |
-| `assertThatThrownBy()`                | Checks exceptions                   |
-| `when()`                              | Defines mock behavior               |
-| `verify()`                            | Checks method calls                 |
-| `any()`                               | Matches any object                  |
-| `never()`                             | Ensures a method was not called     |
+#### Common Annotations & Methods
 
-| Section | Purpose                                                    |
-| ------- | ---------------------------------------------------------- |
-| Arrange | Creates test data and sets up required mocks/configuration |
-| Act     | Calls the real service method being tested                 |
-| Assert  | Verifies the expected results, behavior, or exceptions     |
+| Annotation / Method                   | Purpose                                                               |
+| ------------------------------------- | --------------------------------------------------------------------- |
+| `@ExtendWith(MockitoExtension.class)` | Enables Mockito support in JUnit 5.                                   |
+| `@Mock`                               | Creates mock (fake) dependency objects.                               |
+| `@InjectMocks`                        | Creates the class under test and injects the mocks into it.           |
+| `@Test`                               | Marks a method as a test case.                                        |
+| `assertThat()`                        | Verifies expected results.                                            |
+| `assertThatThrownBy()`                | Verifies that an expected exception is thrown.                        |
+| `when()`                              | Defines the behavior of a mock object.                                |
+| `verify()`                            | Verifies that a method was called on a mock.                          |
+| `any()`                               | Argument matcher that accepts any object/value of the specified type. |
+| `never()`                             | Verifies that a method was **not** called.                            |
 
-verifyNoMoreInteractions()
+---
+
+### AAA Testing Pattern
+| Section     | Purpose                                             |
+| ----------- | --------------------------------------------------- |
+| **Arrange** | Create test data and configure mocks or test setup. |
+| **Act**     | Call the actual method being tested.                |
+| **Assert**  | Verify the expected result, behavior, or exception. |
+
+---
+
+## Spring MVC Controller Testing
+
+| Annotation                              | Purpose                                                                                                                               |
+| --------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------- |
+| `@WebMvcTest(CourseController.class)`   | Loads only the **Spring MVC (web) layer** for `CourseController`. Does **not** start the full application or connect to the database. |
+| `@Import(GlobalExceptionHandler.class)` | Includes the global exception handler so error responses (e.g., **404**, **409**) match production behavior.                          |
+| `@MockBean CourseService`               | Replaces the real `CourseService` bean in the Spring context with a Mockito mock.                                                     |
+| `@Autowired MockMvc`                    | Provides a fake HTTP client to test controller endpoints without starting a server.                                                   |
+| `@Autowired ObjectMapper`               | Converts Java objects to/from JSON for request and response bodies.                                                                   |
+
+---
+
+## `@MockBean` vs `@Mock`
+
+| Annotation  | When to Use                                                                                                                                                           |
+| ----------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `@Mock`     | Use in **unit tests** when Mockito creates the class under test (`@InjectMocks`).                                                                                     |
+| `@MockBean` | Use in **Spring Boot tests** when Spring creates the class under test (e.g., `@WebMvcTest`, `@SpringBootTest`). It replaces a bean in the Spring application context. |
+
+> **Key Difference:**
+>
+> * **`@Mock`** is managed by **Mockito** only.
+> * **`@MockBean`** is managed by **Spring Boot** and replaces a bean in the application context.
